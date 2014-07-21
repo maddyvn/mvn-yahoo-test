@@ -1,39 +1,38 @@
 package Testcase;
 
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.firefox.FirefoxDriver;
 import org.testng.annotations.Test;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.AfterClass;
 
 import Interfaces.LoginPages;
 import Models.User;
+import Utils.Selenium;
 
 public class loginTest {
-	WebDriver driver;
+	Selenium selenium;
 	LoginPages loginPage;
-	User testUser1;
+	User validUser;
 
 	@Test
 	public void login() {
-		loginPage = new LoginPages(driver);
-		driver.get(loginPage.getUri());
-		loginPage.login(testUser1, false);
+		selenium.initWebDriver();
+		selenium.openURL(loginPage.getUri());
+		loginPage.login(selenium, validUser, true);
 	}
 
 	@BeforeClass
 	public void beforeClass() {
-		driver = new FirefoxDriver();
-		driver.manage().window().maximize();
+		selenium = new Selenium();
+		loginPage = new LoginPages();
 		
-		testUser1 = new User();
-		testUser1.setUsername("thongkh86@yahoo.com");
-		testUser1.setPassword("Teka1986");
+		validUser = new User();
+		validUser.setUsername("thongkh86@yahoo.com");
+		validUser.setPassword("Teka1986");
 	}
 
 	@AfterClass
 	public void afterClass() {
-		driver.quit();
+		selenium.quit();
 	}
 
 }
