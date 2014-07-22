@@ -2,7 +2,7 @@
 <suite name="mvn-yahoo-test">
    <test name="Yahoo">
     <classes>
-      <class name="Testcase.loginTest" />
+      <class name="testcases.loginTest" />
     </classes>
-  </test>
+  </test>  
 </suite>	

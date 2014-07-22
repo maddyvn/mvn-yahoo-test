@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Failed suite [mvn-yahoo-test]">
+  <test name="Yahoo(failed)">
+    <classes>
+      <class name="testcases.VerifyTest">
+        <methods>
+          <include name="test1"/>
+          <include name="test2"/>
+          <include name="test3"/>
+          <include name="test4"/>
+        </methods>
+      </class> <!-- testcases.VerifyTest -->
+      <class name="testcases.loginTest">
+        <methods>
+          <include name="afterClass"/>
+          <include name="beforeClass"/>
+        </methods>
+      </class> <!-- testcases.loginTest -->
+    </classes>
+  </test> <!-- Yahoo(failed) -->
+</suite> <!-- Failed suite [mvn-yahoo-test] -->

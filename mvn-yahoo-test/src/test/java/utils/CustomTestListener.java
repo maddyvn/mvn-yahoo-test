@@ -1,4 +1,4 @@
-package Utils;
+package utils;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ public class CustomTestListener extends TestListenerAdapter {
 		
 		if (method.isTestMethod()) {
 
-			List<Throwable> verificationFailures = TestBase.getVerificationFailures();
+			List<Throwable> verificationFailures = SeleniumTestBase.getVerificationFailures();
 
 			//if there are verification failures...
 			if (verificationFailures.size() > 0) {

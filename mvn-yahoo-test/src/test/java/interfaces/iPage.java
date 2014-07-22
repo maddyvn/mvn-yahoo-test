@@ -1,4 +1,4 @@
-package Interfaces;
+package interfaces;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -14,7 +14,7 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.log4testng.Logger;
 
-import Utils.EventListener;
+import utils.EventListener;
 
 public class iPage {
 

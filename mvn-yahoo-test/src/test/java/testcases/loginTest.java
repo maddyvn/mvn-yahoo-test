@@ -1,16 +1,17 @@
-package Testcase;
+package testcases;
+
+import interfaces.LoginPage;
+import models.User;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import Interfaces.LoginPage;
-import Models.User;
+import utils.SeleniumTestBase;
 
-public class loginTest {
+public class loginTest extends SeleniumTestBase {
 	LoginPage loginPage;
 	User validUser;
 
@@ -26,7 +27,7 @@ public class loginTest {
 	public void login_01() {
 		loginPage.openURL("https://login.yahoo.com/config/mail?.intl=us");
 		loginPage.login(validUser, false);
-		Assert.assertTrue(loginPage.waitForPageTitleContains("Yahoo Mail", loginPage.getExplicitlyWaitSecond()), "Verify yahoo mailbox is navigated");
+		assertTrue(loginPage.waitForPageTitleContains("Yahoo Mail", loginPage.getExplicitlyWaitSecond()), "Verify yahoo mailbox is navigated");
 	}
 
 	@BeforeClass

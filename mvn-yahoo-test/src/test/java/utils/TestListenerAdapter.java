@@ -1,4 +1,4 @@
-package Utils;
+package utils;
 
 import org.testng.IInvokedMethod;
 import org.testng.IInvokedMethodListener;

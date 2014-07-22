@@ -1,9 +1,9 @@
-package Interfaces;
+package interfaces;
+
+import models.User;
 
 import org.openqa.selenium.WebDriver;
 import org.testng.log4testng.Logger;
-
-import Models.User;
 
 public class LoginPage extends iPage {
 	private Logger log = Logger.getLogger(LoginPage.class);
