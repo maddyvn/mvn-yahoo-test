@@ -1,29 +1,38 @@
 package Testcase;
 
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeClass;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
-import Interfaces.LoginPages;
+import Interfaces.LoginPage;
 import Models.User;
-import Utils.Selenium;
 
 public class loginTest {
-	Selenium selenium;
-	LoginPages loginPage;
+	LoginPage loginPage;
 	User validUser;
 
+	/************************************************
+	 * Testcase 01: Login with valid user
+	 * 
+	 * Steps 1 - Open Yahoo login page "https://login.yahoo.com"
+	 * Steps 2 - Enter valid username, password
+	 * Steps 3 - Uncheck the keepMeSignIn checkbox
+	 * Steps 4 - Verify yahoo mailbox is navigated
+	 ************************************************/
 	@Test
-	public void login() {
-		selenium.initWebDriver();
-		selenium.openURL(loginPage.getUri());
-		loginPage.login(selenium, validUser, true);
+	public void login_01() {
+		loginPage.openURL("https://login.yahoo.com/config/mail?.intl=us");
+		loginPage.login(validUser, false);
+		Assert.assertTrue(loginPage.waitForPageTitleContains("Yahoo Mail", loginPage.getExplicitlyWaitSecond()), "Verify yahoo mailbox is navigated");
 	}
 
 	@BeforeClass
 	public void beforeClass() {
-		selenium = new Selenium();
-		loginPage = new LoginPages();
+		WebDriver wd = new FirefoxDriver();
+		loginPage = new LoginPage(wd);
 		
 		validUser = new User();
 		validUser.setUsername("thongkh86@yahoo.com");
@@ -32,7 +41,7 @@ public class loginTest {
 
 	@AfterClass
 	public void afterClass() {
-		selenium.quit();
+		loginPage.close();
 	}
 
 }

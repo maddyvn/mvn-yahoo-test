@@ -1,52 +1,85 @@
-package Utils;
+package Interfaces;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.openqa.selenium.*;
-import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.events.EventFiringWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.log4testng.Logger;
 
-/**
- *
- * Common web base actions which using selenium2.
- *
- */
-public class Selenium {
+import Utils.EventListener;
 
-	private Logger log = Logger.getLogger(Selenium.class);
+public class iPage {
+
 	private WebDriver driver;
 	private EventFiringWebDriver eventDriver;
+	private long implicitlyWaitSecond;
+	private long explicitlyWaitSecond;
 	
-	private long DEFAULT_TIMEOUT = 10;
+	protected static long DEFAULT_TIMEOUT = 10;
+	private Logger log = Logger.getLogger(iPage.class);
 
 	/*********************************************************
-	 * init Web driver and set up implicitlyWait time
-	 * 
-	 * @param - implicitlyWait in seconds. If not have parameter, default wait
-	 *        time is 10
+	 * Constructors
 	 *********************************************************/
-	public void initWebDriver() {
-		initWebDriver(DEFAULT_TIMEOUT);
+	public iPage(WebDriver wdriver) {
+		driver = wdriver;
+		setImplicitlyWaitSecond(DEFAULT_TIMEOUT);
+		setExplicitlyWaitSecond(DEFAULT_TIMEOUT);
+		setupEventDriver();
+	}
+	
+	/*********************************************************
+	 * Set/Get ExplicitlyWaitSecond
+	 *********************************************************/
+	public long getExplicitlyWaitSecond() {
+		return explicitlyWaitSecond;
 	}
 
-	public void initWebDriver(long implicitlyWaitSecond) {
-		DEFAULT_TIMEOUT = implicitlyWaitSecond;
-		driver = new FirefoxDriver();
-		log.info("Initialized " + driver.toString());
-		driver.manage().timeouts().implicitlyWait(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
-		log.info("ImplicitlyWait set to " + DEFAULT_TIMEOUT);
-		driver.manage().window().maximize();
-		log.info("Web instance is maximized");
-		eventDriver = new EventFiringWebDriver(driver);
+	public void setExplicitlyWaitSecond(long explicitlyWaitSecond) {
+		this.explicitlyWaitSecond = explicitlyWaitSecond;
+	}
+
+	/*********************************************************
+	 * Set/Get ImplicitlyWaitSecond
+	 *********************************************************/
+	public long getImplicitlyWaitSecond() {
+		return implicitlyWaitSecond;
+	}
+
+	public void setImplicitlyWaitSecond(long second) {
+		implicitlyWaitSecond = second;
+		try {
+			driver.manage().timeouts().implicitlyWait(implicitlyWaitSecond, TimeUnit.SECONDS);
+			log.trace("ImplicitlyWait set to " + implicitlyWaitSecond);
+		} catch (Throwable t) {
+			log.error("Driver is null.", t);
+		}
+	}
+
+	/*********************************************************
+	 * Setup the EventDriver for capturing event
+	 *********************************************************/
+	public void setupEventDriver() {
+		eventDriver = new EventFiringWebDriver(this.driver);
 		eventDriver.register(new EventListener());
-		
 	}
-
+	
+	/*********************************************************
+	 * Maximize windows
+	 *********************************************************/
+	public void maximize() {
+		eventDriver.manage().window().maximize();
+		log.debug("Maximized window instance.");
+	}
+	
 	/*********************************************************
 	 * open an URL
 	 * 
@@ -54,7 +87,7 @@ public class Selenium {
 	 *********************************************************/
 	public void openURL(String url) {
 		eventDriver.get(url);
-		log.info("Went to URL: " + eventDriver.getCurrentUrl());
+		log.debug("Went to URL: " + eventDriver.getCurrentUrl());
 	}
 
 	/*********************************************************
@@ -62,16 +95,16 @@ public class Selenium {
 	 *********************************************************/
 	public void refresh() {
 		eventDriver.navigate().refresh();
-		log.info("Refreshed the current page");
+		log.debug("Refreshed the current page");
 	}
 
 	/*********************************************************
-	 * close and quit webdriver
+	 * close webdriver
 	 *********************************************************/
-	public void quit() {
+	public void close() {
 		eventDriver.close();
 		eventDriver.quit();
-		log.info("Quit " + driver.toString());
+		log.trace("Closed " + driver.toString());
 	}
 
 	/*********************************************************
@@ -79,6 +112,7 @@ public class Selenium {
 	 *********************************************************/
 	public void back() {
 		eventDriver.navigate().back();
+		log.debug("Page has just moved back");
 	}
 
 	/*********************************************************
@@ -90,9 +124,10 @@ public class Selenium {
 	 *********************************************************/
 	public boolean isElementExists(By locator) {
 		if (eventDriver.findElements(locator).size() > 0) {
+			log.trace("Element found: " + locator.toString() + "(" + eventDriver.findElements(locator).size() + ")");
 			return true;
 		} else {
-			log.info("no element found: " + locator.toString());
+			log.trace("No element found: " + locator.toString());
 			return false;
 		}
 	}
@@ -109,8 +144,9 @@ public class Selenium {
 	 * @return true if element exists and display on screen
 	 *********************************************************/
 	public boolean isDisplayed(By locator) {
-		return isElementExists(locator) ? eventDriver.findElement(locator)
-				.isDisplayed() : false;
+		boolean flag = isElementExists(locator) ? eventDriver.findElement(locator).isDisplayed() : false;
+		log.trace("Element " + locator.toString() + ". IsDisplayed() status found: " + flag);
+		return flag;
 	}
 
 	public boolean isDisplayed(String locator) {
@@ -125,8 +161,9 @@ public class Selenium {
 	 * @return true if element is enabled
 	 *********************************************************/
 	public boolean isEnabled(By locator) {
-		return isElementExists(locator) ? eventDriver.findElement(locator)
-				.isEnabled() : false;
+		boolean flag = isElementExists(locator) ? eventDriver.findElement(locator).isEnabled() : false;
+		log.trace("Element " + locator.toString() + ". IsEnabled() status found: " + flag);
+		return flag;
 	}
 
 	public boolean isEnabled(String locator) {
@@ -141,14 +178,15 @@ public class Selenium {
 	 * @return true if element is selected
 	 *********************************************************/
 	public boolean isSelected(By locator) {
-		return isElementExists(locator) ? eventDriver.findElement(locator)
-				.isSelected() : false;
+		boolean flag = isElementExists(locator) ? eventDriver.findElement(locator).isSelected() : false;
+		log.trace("Element " + locator.toString() + ". IsSelected() status found: " + flag);
+		return flag;
 	}
 
 	public boolean isSelected(String locator) {
 		return isSelected(By.xpath(locator));
 	}
-
+	
 	/*********************************************************
 	 * check / uncheck a web element toggle button if the element exists
 	 * 
@@ -157,8 +195,9 @@ public class Selenium {
 	 * @overrideparam - the target web element
 	 *********************************************************/
 	public boolean check(By locator, boolean checked) {
-		return isElementExists(locator) ? check(
-				eventDriver.findElement(locator), checked) : false;
+		boolean flag = isElementExists(locator) ? check(eventDriver.findElement(locator), checked) : false;
+		log.debug("Performed check action on element " + locator.toString() + ". IsSelected() status now becomes: "  + flag);
+		return flag;
 	}
 
 	public boolean check(String xpath, boolean checked) {
@@ -166,12 +205,9 @@ public class Selenium {
 	}
 
 	public boolean check(WebElement element, boolean checked) {
-		if ((element.isSelected() && checked == false)
-				|| (!element.isSelected() && checked == true)) {
-//			element.sendKeys(Keys.SPACE);
+		if ((element.isSelected() && checked == false) || (!element.isSelected() && checked == true)) {
 			element.click();
 		}
-		log.info("Try to check the checkbox " + element.getTagName() + ". Selected status now: "  + element.isSelected());
 		return element.isSelected();
 	}
 
@@ -186,8 +222,10 @@ public class Selenium {
 	}
 
 	public void click(By locator) {
-		if (isElementExists(locator))
+		if (isElementExists(locator)) {
 			eventDriver.findElement(locator).click();
+			log.debug("Performed click action on element " + locator.toString());
+		}
 	}
 
 	/*********************************************************
@@ -198,8 +236,7 @@ public class Selenium {
 	 * @return value of the attribute
 	 *********************************************************/
 	public String getAttribute(By locator, String attribute) {
-		return (isElementExists(locator)) ? eventDriver.findElement(locator)
-				.getAttribute(attribute) : null;
+		return (isElementExists(locator)) ? eventDriver.findElement(locator).getAttribute(attribute) : null;
 	}
 
 	public String getAttribute(String locator, String attribute) {
@@ -214,8 +251,7 @@ public class Selenium {
 	 * @return css value
 	 *********************************************************/
 	public String getCssValue(By locator, String property) {
-		return (isElementExists(locator)) ? eventDriver.findElement(locator)
-				.getCssValue(property) : null;
+		return (isElementExists(locator)) ? eventDriver.findElement(locator).getCssValue(property) : null;
 	}
 
 	public String getCssValue(String locator, String property) {
@@ -279,8 +315,7 @@ public class Selenium {
 	 * @return - the selected text
 	 *********************************************************/
 	public String getSelectedText(By locator) {
-		return (isElementExists(locator)) ? getSelectedText(eventDriver
-				.findElement(locator)) : null;
+		return (isElementExists(locator)) ? getSelectedText(eventDriver.findElement(locator)) : null;
 	}
 
 	public String getSelectedText(String xpath) {
@@ -300,8 +335,7 @@ public class Selenium {
 	 * @return - text value of an element
 	 *********************************************************/
 	public String getText(By locator) {
-		return (isElementExists(locator)) ? eventDriver.findElement(locator)
-				.getText() : null;
+		return (isElementExists(locator)) ? eventDriver.findElement(locator).getText() : null;
 	}
 
 	public String getText(String locator) {
@@ -319,8 +353,9 @@ public class Selenium {
 		if (value != null && isElementExists(locator))
 			try {
 				select(eventDriver.findElement(locator), value);
+				log.debug("Seleted value of element" + locator.toString() + "now becomes: " + value);
 			} catch (StaleElementReferenceException e) {
-				log.info("cannot select value-" + e);
+				log.debug("Cannot select value-" + e);
 			}
 	}
 
@@ -330,8 +365,7 @@ public class Selenium {
 
 	public void select(WebElement element, String value) {
 		Select select = new Select(element);
-		waitForElementPresent(By.xpath("option[text()='" + value + "']"), true,
-				DEFAULT_TIMEOUT);
+		waitForElementPresent(By.xpath("option[text()='" + value + "']"), true, DEFAULT_TIMEOUT);
 		select.selectByVisibleText(value);
 	}
 
@@ -448,14 +482,13 @@ public class Selenium {
 	}
 
 	/*********************************************************
-	 * wait for element attribute change
+	 * Wait for element attribute change
 	 * 
 	 * @param - By: locator of element
 	 * @overrideparam - the xpath of element
 	 * @param - wait time in seconds
 	 *********************************************************/
-	public void waitForAttributeChanged(By locator, String attribute,
-			long second) {
+	public void waitForAttributeChanged(By locator, String attribute, long second) {
 		if (isElementExists(locator)) {
 			String old = getAttribute(locator, attribute);
 			long end = System.currentTimeMillis() + second * 1000;
@@ -466,9 +499,40 @@ public class Selenium {
 		}
 	}
 
-	public void waitForAttributeChanged(String locator, String attribute,
-			long second) {
+	public void waitForAttributeChanged(String locator, String attribute, long second) {
 		waitForAttributeChanged(By.xpath(locator), attribute, second);
+	}
+
+	/*********************************************************
+	 * Wait for page title equals assigned string
+	 * 
+	 * @param - String: page title
+	 * @param - wait time in seconds
+	 *********************************************************/
+	public boolean waitForPageTitle(String title, long second) {
+		log.trace("Wait for page title become '" + title.toString() + "' for " + second + "seconds");
+		long end = System.currentTimeMillis() + second * 1000;
+		while (System.currentTimeMillis() < end) {
+			if (getPageTitle().contentEquals(title))
+				return true;
+		}
+		return false;
+	}
+	
+	/*********************************************************
+	 * Wait for page title contains assigned string
+	 * 
+	 * @param - String: subtitle to contain
+	 * @param - wait time in seconds
+	 *********************************************************/
+	public boolean waitForPageTitleContains(String subTitle, long second) {
+		log.trace("Wait for page title contains '" + subTitle.toString() + "' for " + second + "seconds");
+		long end = System.currentTimeMillis() + second * 1000;
+		while (System.currentTimeMillis() < end) {
+			if (getPageTitle().contains(subTitle))
+				return true;
+		}
+		return false;
 	}
 
 }
