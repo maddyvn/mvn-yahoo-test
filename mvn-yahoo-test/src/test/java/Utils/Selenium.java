@@ -37,11 +37,14 @@ public class Selenium {
 	public void initWebDriver(long implicitlyWaitSecond) {
 		DEFAULT_TIMEOUT = implicitlyWaitSecond;
 		driver = new FirefoxDriver();
-		driver.manage().timeouts()
-				.implicitlyWait(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
+		log.info("Initialized " + driver.toString());
+		driver.manage().timeouts().implicitlyWait(DEFAULT_TIMEOUT, TimeUnit.SECONDS);
+		log.info("ImplicitlyWait set to " + DEFAULT_TIMEOUT);
 		driver.manage().window().maximize();
+		log.info("Web instance is maximized");
 		eventDriver = new EventFiringWebDriver(driver);
 		eventDriver.register(new EventListener());
+		
 	}
 
 	/*********************************************************
@@ -51,6 +54,7 @@ public class Selenium {
 	 *********************************************************/
 	public void openURL(String url) {
 		eventDriver.get(url);
+		log.info("Went to URL: " + eventDriver.getCurrentUrl());
 	}
 
 	/*********************************************************
@@ -58,6 +62,7 @@ public class Selenium {
 	 *********************************************************/
 	public void refresh() {
 		eventDriver.navigate().refresh();
+		log.info("Refreshed the current page");
 	}
 
 	/*********************************************************
@@ -66,6 +71,7 @@ public class Selenium {
 	public void quit() {
 		eventDriver.close();
 		eventDriver.quit();
+		log.info("Quit " + driver.toString());
 	}
 
 	/*********************************************************
