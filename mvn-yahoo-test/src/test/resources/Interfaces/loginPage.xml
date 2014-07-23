@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page name="Sign in to Yahoo"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="BasePageXML.xsd">
+  <PageItem name="PageIdentity" by="XPath">//div[@class='lgbx-ltr']/div[1]/img[@src='https://s1.yimg.com/rz/d/yahoo_en-US_f_p_bestfit.png']</PageItem>
+  
+  <PageItem name="txtUsername" by="XPath">//*[@id='username']</PageItem>
+  <PageItem name="txtPassword" by="XPath">//*[@id='passwd']</PageItem>
+  <PageItem name="btnSignIn" by="XPath">//*[@id='.save']</PageItem>
+  <PageItem name="chkKeepMeSignedIn" by="XPath">//*[@id='pLabelC']</PageItem>
+</Page>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="XMLSchema1"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  elementFormDefault="qualified"
+>
+	<xs:element name="Page" type="PageType"></xs:element>
+
+	<xs:complexType name="PageType">
+		<xs:sequence>
+			<xs:element name="PageItem" minOccurs="0" maxOccurs="unbounded" type="PageItemType"></xs:element>
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:string"></xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="PageItemType">
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="name" type="xs:string" use="required"></xs:attribute>
+				<xs:attribute name="by" type="FindByType"></xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+
+	<xs:simpleType name="FindByType">
+		<xs:union>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+				<xs:enumeration value="CSS"></xs:enumeration>
+				<xs:enumeration value="XPath"></xs:enumeration>
+				<xs:enumeration value="ID"></xs:enumeration>
+				<xs:enumeration value="Name"></xs:enumeration>
+				<xs:enumeration value="LinkText"></xs:enumeration>
+				</xs:restriction>
+			</xs:simpleType>
+			<!-- allow case insensitivity -->
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:pattern value="[Cc][Ss][Ss]" />
+					<xs:pattern value="[Xx][Pp][Aa][Tt][Hh]" />
+					<xs:pattern value="[Ii][Dd]" />
+					<xs:pattern value="[Nn][Aa][Mm][Ee]" />
+					<xs:pattern value="[Ll][Ii][Nn][Kk][Tt][Ee][Xx][Tt]" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:union>
+	</xs:simpleType>
+</xs:schema>
