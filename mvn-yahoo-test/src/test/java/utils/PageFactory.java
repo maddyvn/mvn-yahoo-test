@@ -14,16 +14,37 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
+/**
+ * Generate a page source with all controls loaded from an .XML file
+ * @author Thong Khuat <maddyvn@gmail.com>
+ */
 public class PageFactory {
-	private String pageName;
 	private HashMap<String, HashMap<String, String>> controlList;
 	
 	public PageFactory(String pageName) {
-		this.pageName = pageName;
+		try {
+			loadControls(loadXML(getXMLFilePath(pageName)));
+		} catch (SAXException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		}
 	}
 
+	public HashMap<String, HashMap<String, String>> getControlList() {
+		return controlList;
+	}
+
+	/******************************************************************
+	 * Load all controls under root element of assigned Document object
+	 * 
+	 * @param document - Normalized Document object
+	 ******************************************************************/
 	public void loadControls(Document document){
-		
+		// TODO: generate code here
+		// NodeList nList = doc.getElementsByTagName("staff");
 	}
 	
 	/******************************************************************
@@ -40,74 +61,22 @@ public class PageFactory {
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		document = dBuilder.parse(xmlFile);
+		
+		// Following
+		// http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
 		document.getDocumentElement().normalize();
 		
 		return document;
 	}
 	
+	/******************************************************************
+	 * Return the full path of assign .XML file name
+	 * 
+	 * @param filename - .XML file name (not included .XML extension)
+	 * @return String
+	 ******************************************************************/
 	public String getXMLFilePath(String filename){
+		// TODO: using relative classpath from src/test/resources/Interfaces
 		return filename;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	public static void main(String argv[]) {
-
-		try {
-
-			File fXmlFile = new File("/Users/mkyong/staff.xml");
-			DocumentBuilderFactory dbFactory = DocumentBuilderFactory
-					.newInstance();
-			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(fXmlFile);
-
-			// optional, but recommended
-			// read this -
-			// http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
-			doc.getDocumentElement().normalize();
-
-			System.out.println("Root element :"
-					+ doc.getDocumentElement().getNodeName());
-
-			NodeList nList = doc.getElementsByTagName("staff");
-
-			System.out.println("----------------------------");
-
-			for (int temp = 0; temp < nList.getLength(); temp++) {
-
-				Node nNode = nList.item(temp);
-
-				System.out.println("\nCurrent Element :" + nNode.getNodeName());
-
-				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-
-					Element eElement = (Element) nNode;
-
-					System.out.println("Staff id : "
-							+ eElement.getAttribute("id"));
-					System.out.println("First Name : "
-							+ eElement.getElementsByTagName("firstname")
-									.item(0).getTextContent());
-					System.out.println("Last Name : "
-							+ eElement.getElementsByTagName("lastname").item(0)
-									.getTextContent());
-					System.out.println("Nick Name : "
-							+ eElement.getElementsByTagName("nickname").item(0)
-									.getTextContent());
-					System.out.println("Salary : "
-							+ eElement.getElementsByTagName("salary").item(0)
-									.getTextContent());
-
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-}
+}			
