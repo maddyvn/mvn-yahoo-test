@@ -50,8 +50,8 @@ public class LoginPage extends ControlFactory {
 		waitForElementPresent(getControl("txtUsername"), true, DEFAULT_TIMEOUT);
 		type(getControl("txtUsername"), user.getUsername());
 		waitForElementPresent(getControl("txtPassword"), true, DEFAULT_TIMEOUT);
-		type("txtPassword", user.getPassword());
+		type(getControl("txtPassword"), user.getPassword());
 		toggleKeepMeSignInStatus(keepMeSignIn);
-		click("btnSignIn");
+		click(getControl("btnSignIn"));
 	}
 }

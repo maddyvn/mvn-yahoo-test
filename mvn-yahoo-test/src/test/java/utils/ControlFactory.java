@@ -5,9 +5,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.xerces.parsers.DOMParser;
 import org.openqa.selenium.By;
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
-import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
@@ -18,10 +18,9 @@ import java.util.HashMap;
  * @author Thong Khuat <maddyvn@gmail.com>
  */
 public abstract class ControlFactory extends SeleniumTestBase {
-	private String pageTitle;
+	private String pageName;
 	private HashMap<String, By> controlList;
 	
-	private static String PAGE_TAGNAME = "Page";
 	private static String ITEM_TAGNAME = "PageItem";
 	private static String ELEMENT_ATTRIBUTE_NAME = "Name";
 	private static String ELEMENT_ATTRIBUTE_BY = "By";
@@ -41,9 +40,9 @@ public abstract class ControlFactory extends SeleniumTestBase {
 		}
 	}
 	
-//	public String getPageTitle() {
-//		return pageTitle;
-//	}
+	public String getPageName() {
+		return pageName;
+	}
 	
 	/******************************************************************
 	 * Get a specific control from the control factory
@@ -60,21 +59,53 @@ public abstract class ControlFactory extends SeleniumTestBase {
 	 * @param document - Normalized Document object
 	 ******************************************************************/
 	private void setControlList(Document document) {
-		pageTitle = document.getNodeValue();
-//		pageTitle = document.getDocumentElement().getAttribute(ELEMENT_ATTRIBUTE_NAME);
+		pageName = getNodeAttribute(ELEMENT_ATTRIBUTE_NAME, document.getFirstChild());
 		controlList = new HashMap<String, By>();
 		
 		NodeList nList = document.getElementsByTagName(ITEM_TAGNAME);
 		for (int i = 0; i < nList.getLength(); i++){
 			Node node = nList.item(i);
 			if (node.getNodeType() == Node.ELEMENT_NODE){
-				Element element = (Element) node;
-				String key = element.getAttribute(ELEMENT_ATTRIBUTE_NAME);
-				String byType = element.getAttribute(ELEMENT_ATTRIBUTE_BY);
-				String value = element.getFirstChild().getNodeValue();
+				String key = getNodeAttribute(ELEMENT_ATTRIBUTE_NAME, node);
+				String byType = getNodeAttribute(ELEMENT_ATTRIBUTE_BY, node);
+				String value = getNodeValue(node);
 				controlList.put(key, getByWithType(byType, value));
 			}
 		}
+	}
+
+	/******************************************************************
+	 * Get the text value of a node
+	 * 
+	 * @param node - Node to get value
+	 * @return String
+	 ******************************************************************/
+	private String getNodeValue(Node node) {
+		NodeList childNodes = node.getChildNodes();
+		for (int i = 0; i < childNodes.getLength(); i++) {
+			Node data = childNodes.item(i);
+			if (data.getNodeType() == Node.TEXT_NODE)
+				return data.getNodeValue();
+		}
+		return "";
+	}
+
+	/******************************************************************
+	 * Get an attribute from a note
+	 * 
+	 * @param attributeName - attribute name
+	 * @param node - Node to get attribute
+	 * @return String
+	 ******************************************************************/
+	private String getNodeAttribute(String attributeName, Node node) {
+		NamedNodeMap attrs = node.getAttributes();
+		for (int i = 0; i < attrs.getLength(); i++) {
+			Node attr = attrs.item(i);
+			if (attr.getNodeName().equalsIgnoreCase(attributeName)) {
+				return attr.getNodeValue();
+			}
+		}
+		return "";
 	}
 
 	/******************************************************************
@@ -113,11 +144,11 @@ public abstract class ControlFactory extends SeleniumTestBase {
 		DOMParser parser = new DOMParser();
 	    parser.parse(filePath);
 	    Document document = parser.getDocument();
-		
+
 		// Following
 		// http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
-//		document.getDocumentElement().normalize();
-		
+		// document.getDocumentElement().normalize();
+
 		return document;
 	}
 	
@@ -128,6 +159,7 @@ public abstract class ControlFactory extends SeleniumTestBase {
 	 * @return String
 	 ******************************************************************/
 	private String getXMLFilePath(String resourceName){
-		return "C:\\loginPage.xml";
+		String path = System.getProperty("user.dir");
+		return path + "/src/test/resources/Interfaces/" + resourceName + ".xml";
 	}
 }			
