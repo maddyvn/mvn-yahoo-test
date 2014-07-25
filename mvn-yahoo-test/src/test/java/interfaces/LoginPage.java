@@ -5,19 +5,16 @@ import models.User;
 import org.openqa.selenium.WebDriver;
 import org.testng.log4testng.Logger;
 
-public class LoginPage extends iPage {
-	private Logger log = Logger.getLogger(LoginPage.class);
+import utils.ControlFactory;
+
+public class LoginPage extends ControlFactory {
+	public Logger log = Logger.getLogger(LoginPage.class);
 	
-	public LoginPage(WebDriver wdriver) {
-		super(wdriver);
+	public LoginPage(WebDriver driver) {
+		setUp(driver);
+		loadControls("loginPage");
 	}
 
-	// Controls
-	private static String txtUsername = "//*[@id='username']";
-	private static String txtPassword = "//*[@id='passwd']";
-	private static String btnSignIn = "//*[@id='.save']";
-	private static String chkKeepMeSignedIn = "//*[@id='pLabelC']";
-	
 	// Methods
 	/***********************************************************
 	 * Get the current status of keepMeSignIn checkbox
@@ -25,8 +22,8 @@ public class LoginPage extends iPage {
 	 * @return boolean
 	 ***********************************************************/
 	public boolean getKeepMeSignInStatus() {
-		waitForElementPresent(chkKeepMeSignedIn, true, DEFAULT_TIMEOUT);
-		return (getAttribute(chkKeepMeSignedIn, "class").contains("checked")) ?  true : false;			
+		waitForElementPresent(getControl("chkKeepMeSignedIn"), true, DEFAULT_TIMEOUT);
+		return (getAttribute(getControl("chkKeepMeSignedIn"), "class").contains("checked")) ?  true : false;			
 	}
 	
 	/************************************************************
@@ -36,7 +33,7 @@ public class LoginPage extends iPage {
 	 ***********************************************************/
 	public void toggleKeepMeSignInStatus(boolean status) {
 		if ((getKeepMeSignInStatus() && !status) || (!getKeepMeSignInStatus() && status)){
-			click(chkKeepMeSignedIn);
+			click(getControl("chkKeepMeSignedIn"));
 			log.info("Toggle KeepMeSignIn status to " + status);
 		}
 	}
@@ -50,11 +47,11 @@ public class LoginPage extends iPage {
 	 ************************************************************/
 	public void login(User user, boolean keepMeSignIn) {
 		log.info("Login with user account: " + user.getUsername().toString() + "/" + user.getPassword().toString());
-		waitForElementPresent(txtUsername, true, DEFAULT_TIMEOUT);
-		type(txtUsername, user.getUsername());
-		waitForElementPresent(txtPassword, true, DEFAULT_TIMEOUT);
-		type(txtPassword, user.getPassword());
+		waitForElementPresent(getControl("txtUsername"), true, DEFAULT_TIMEOUT);
+		type(getControl("txtUsername"), user.getUsername());
+		waitForElementPresent(getControl("txtPassword"), true, DEFAULT_TIMEOUT);
+		type("txtPassword", user.getPassword());
 		toggleKeepMeSignInStatus(keepMeSignIn);
-		click(btnSignIn);
+		click("btnSignIn");
 	}
 }

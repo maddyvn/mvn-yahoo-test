@@ -2,10 +2,12 @@ package interfaces;
 
 import org.openqa.selenium.WebDriver;
 
-public class MailboxPage extends iPage {
+import utils.ControlFactory;
+
+public class MailboxPage extends ControlFactory {
 
 	public MailboxPage(WebDriver wdriver) {
-		super(wdriver);
+		setUp(wdriver);
 	}
 
 }
