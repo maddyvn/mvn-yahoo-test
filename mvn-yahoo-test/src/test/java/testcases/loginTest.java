@@ -25,7 +25,7 @@ public class loginTest extends SeleniumTestBase {
 	 ************************************************/
 	@Test
 	public void login_01() {
-		loginPage.openURL("https://login.yahoo.com/config/mail?.intl=us");
+		loginPage.openURL("https://login.yahoo.com/config/mail?&.src=ym");
 		loginPage.login(validUser, false);
 		assertTrue(loginPage.waitForPageTitleContains("Yahoo Mail", loginPage.getExplicitlyWaitSecond()), "Verify yahoo mailbox is navigated");
 	}
@@ -36,8 +36,8 @@ public class loginTest extends SeleniumTestBase {
 		loginPage = new LoginPage(wd);
 		
 		validUser = new User();
-		validUser.setUsername("thongkh86@yahoo.com");
-		validUser.setPassword("Teka1986");
+		validUser.setUsername("testUsername@yahoo.com");
+		validUser.setPassword("testPass");
 	}
 
 	@AfterClass

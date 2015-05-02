@@ -4,8 +4,8 @@
       xsi:noNamespaceSchemaLocation="BasePageXML.xsd">
   <PageItem name="PageIdentity" by="XPath">//div[@class='lgbx-ltr']/div[1]/img[@src='https://s1.yimg.com/rz/d/yahoo_en-US_f_p_bestfit.png']</PageItem>
   
-  <PageItem name="txtUsername" by="XPath">//*[@id='username']</PageItem>
-  <PageItem name="txtPassword" by="XPath">//*[@id='passwd']</PageItem>
-  <PageItem name="btnSignIn" by="XPath">//*[@id='.save']</PageItem>
-  <PageItem name="chkKeepMeSignedIn" by="XPath">//*[@id='pLabelC']</PageItem>
+  <PageItem name="txtUsername" by="XPath">//*[@id='login-username']</PageItem>
+  <PageItem name="txtPassword" by="XPath">//*[@id='login-passwd']</PageItem>
+  <PageItem name="btnSignIn" by="XPath">//*[@id='login-signin']</PageItem>
+  <PageItem name="chkKeepMeSignedIn" by="XPath">//*[@id='persistent']</PageItem>
 </Page>
